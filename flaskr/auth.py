@@ -4,7 +4,7 @@ Blueprint for authentication
                 to an app, they are registered with a blueprint
 """
 #TODO i really need to re-factor this after I get the intial code down
-import functools as fc 
+import functools 
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session,
@@ -42,6 +42,7 @@ def register():
             except db.IntegrityError:
                 error = f"User {username} is already registered"
             else:
+                # url_for -> URL based on name instead writing full URL
                 return redirect(url_for("auth.login"))
             
         flash(error)
@@ -100,4 +101,20 @@ def logout():
     """
     session.clear()
     return redirect(url_for("index"))
+
+def login_required(view):
+    """
+    checks if a user is loaded and redirects to login page if user isn't loaded
+    """
+    @functools.wrap(view)
+    def wrapped_view(**kwargs):
+        """
+        wrapper to check each view it's applied to
+        """
+        if g.user is None:
+            return redirect(url_for("auth.login"))
+        
+        return view(**kwargs)
+    
+    return wrapped_view
                 
