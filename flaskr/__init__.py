@@ -40,4 +40,10 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
+    # importing the blog blueprint
+    from . import blog
+    app.register_blueprint(blog.bp)
+    app.add_url_rule("/", endpoint="index")
+    # blog doesn't have a url_prefix since its the main component
+    # so we are setting it to the index (root) of the app "/" with teh add_url_rule
     return app
