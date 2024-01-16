@@ -54,3 +54,11 @@ def init_db_command():
 
     init_db()
     click.echo("Initialized the database")
+
+def init_app(app):
+    """
+    registers the db functions with the app instance
+    """
+
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
